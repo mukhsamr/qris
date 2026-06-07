@@ -1,0 +1,28 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "qris-dynamic",
+	"compatibility_date": "2026-06-07",
+	"compatibility_flags": [
+		"nodejs_als"
+	],
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
+	"workers_dev": true,
+	"preview_urls": true,
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "qris-db",
+			"database_id": "d1357115-becd-4997-8645-46dd69785cbd"
+		}
+	],
+	"r2_buckets": [
+		{
+			"bucket_name": "qris-bucket",
+			"binding": "BUCKET"
+		}
+	],
+}

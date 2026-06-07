@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+@theme {
+  /* === NQMCreative — Forest-neutral system === */
+
+  /* Tinted neutrals with low-chroma green undertone */
+  --color-surface: oklch(98.5% 0.002 155);
+  --color-surface-soft: oklch(96.5% 0.003 155);
+
+  --color-card: oklch(100% 0 0);
+
+  --color-border: oklch(92% 0.002 155);
+  --color-border-strong: oklch(85% 0.003 155);
+
+  --color-ink: oklch(14% 0.018 160);
+  --color-muted: oklch(46% 0.015 160);
+  --color-muted-soft: oklch(66% 0.012 160);
+
+  /* Emerald accent — commitment only */
+  --color-accent: oklch(46% 0.095 160);
+  --color-accent-strong: oklch(33% 0.065 160);
+  --color-accent-light: oklch(95% 0.025 160);
+  --color-accent-soft: oklch(88% 0.065 160);
+
+  /* Dark structure panels */
+  --color-sidebar: oklch(12% 0.02 160);
+  --color-sidebar-panel: oklch(16% 0.022 160);
+  --color-sidebar-text: oklch(95% 0.008 160);
+  --color-sidebar-muted: oklch(62% 0.012 160);
+  --color-accent-highlight: oklch(80% 0.07 160);
+
+  /* Shadows — tonal, tinted, job-driven */
+  --shadow-card: 0 1px 2px color-mix(in oklch, black 6%, transparent);
+  --shadow-action: 0 10px 24px
+    color-mix(in oklch, oklch(33% 0.065 160) 10%, transparent);
+  --shadow-document: 0 20px 45px
+    color-mix(in oklch, oklch(33% 0.065 160) 6%, transparent);
+
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --font-mono:
+    "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+}
