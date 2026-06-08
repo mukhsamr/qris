@@ -7,6 +7,14 @@ interface GoogleEnv {
 	GOOGLE_REDIRECT_URI: string;
 }
 
+export function hasGoogleAuthEnv(env: Partial<GoogleEnv> | undefined): env is GoogleEnv {
+	return Boolean(
+		env?.GOOGLE_CLIENT_ID &&
+			env.GOOGLE_CLIENT_SECRET &&
+			env.GOOGLE_REDIRECT_URI
+	);
+}
+
 function getGoogleClient(env: GoogleEnv) {
 	return new Google(
 		env.GOOGLE_CLIENT_ID,

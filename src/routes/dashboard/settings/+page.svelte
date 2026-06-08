@@ -254,15 +254,6 @@
 							<Alert.Title>{data.user.hasPassword ? 'Password berhasil diubah.' : 'Password berhasil dibuat.'}</Alert.Title>
 						</Alert.Root>
 					{/if}
-					{#if googleAccount && !data.user.hasPassword}
-						<Alert.Root variant="warning" class="mb-4">
-							<CircleAlert class="size-4" />
-							<Alert.Title>Buat kata sandi untuk akun ini</Alert.Title>
-							<Alert.Description>
-								Setelah kata sandi dibuat, kamu bisa login dengan email dan kata sandi walaupun Google diputuskan.
-							</Alert.Description>
-						</Alert.Root>
-					{/if}
 					<form method="POST" action="?/changePassword" use:enhance onsubmit={() => passwordSuccess = false}>
 						<div class="space-y-4">
 							{#if data.user.hasPassword}

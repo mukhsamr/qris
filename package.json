@@ -13,6 +13,8 @@
     "gen": "wrangler types",
     "db:migrate:local": "wrangler d1 migrations apply qris-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply qris-db --remote",
+    "db:reset:local": "wrangler d1 execute qris-db --local --command \"DROP TABLE IF EXISTS rate_limits; DROP TABLE IF EXISTS api_usage_logs; DROP TABLE IF EXISTS api_keys; DROP TABLE IF EXISTS generation_logs; DROP TABLE IF EXISTS projects; DROP TABLE IF EXISTS saved_qris; DROP TABLE IF EXISTS sessions; DROP TABLE IF EXISTS oauth_accounts; DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS d1_migrations;\" && bun run db:migrate:local",
+    "db:reset:remote": "wrangler d1 execute qris-db --remote --command \"DROP TABLE IF EXISTS rate_limits; DROP TABLE IF EXISTS api_usage_logs; DROP TABLE IF EXISTS api_keys; DROP TABLE IF EXISTS generation_logs; DROP TABLE IF EXISTS projects; DROP TABLE IF EXISTS saved_qris; DROP TABLE IF EXISTS sessions; DROP TABLE IF EXISTS oauth_accounts; DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS d1_migrations;\" && bun run db:migrate:remote",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

@@ -1,8 +1,8 @@
 import { redirect } from '@sveltejs/kit';
-import { deleteSession, getSessionCookieName, getSessionCookieOptions } from '$lib/server/auth/session';
+import { deleteSession, getSessionCookieName } from '$lib/server/auth/session';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = async ({ platform, cookies, url }) => {
+export const POST: RequestHandler = async ({ platform, cookies }) => {
 	const db = platform?.env.DB;
 	if (!db) throw redirect(302, '/login');
 
@@ -11,8 +11,7 @@ export const POST: RequestHandler = async ({ platform, cookies, url }) => {
 		await deleteSession(db, token);
 	}
 
-	// Clear cookie
-	cookies.set(getSessionCookieName(), '', getSessionCookieOptions(undefined, url.protocol === 'https:'));
+	cookies.delete(getSessionCookieName(), { path: '/' });
 
 	throw redirect(302, '/login');
 };

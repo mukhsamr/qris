@@ -2,10 +2,10 @@ import { json } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { getDb } from '$lib/server/db/index';
 import { users, oauthAccounts, sessions, savedQris, projects, generationLogs, apiKeys, apiUsageLogs } from '$lib/server/db/schema';
-import { deleteSession, getSessionCookieName, getSessionCookieOptions } from '$lib/server/auth/session';
+import { deleteSession, getSessionCookieName } from '$lib/server/auth/session';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = async ({ locals, platform, cookies, url }) => {
+export const POST: RequestHandler = async ({ locals, platform, cookies }) => {
 	if (!locals.user) return json({ error: 'Unauthorized' }, { status: 401 });
 
 	const db = platform?.env.DB;
@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ locals, platform, cookies, url }) =
 	if (token) {
 		await deleteSession(db, token);
 	}
-	cookies.set(getSessionCookieName(), '', getSessionCookieOptions(undefined, url.protocol === 'https:'));
+	cookies.delete(getSessionCookieName(), { path: '/' });
 
 	return json({ success: true });
 };

@@ -1,7 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { generateDynamicQRIS } from '$lib/qris/generate';
 import { z } from 'zod';
-import { verifyTurnstile } from '$lib/server/turnstile';
 import {
   checkRateLimit,
   getClientRateLimitKey,
@@ -17,7 +16,6 @@ const convertSchema = z.object({
     .int({ error: 'Nominal harus bilangan bulat' })
     .positive({ error: 'Nominal harus lebih dari 0' })
     .max(99_999_999_999, { message: 'Nominal terlalu besar (max 99 milyar)' }),
-  turnstileToken: z.string({ error: 'Verifikasi Turnstile wajib diisi' }).min(1, 'Verifikasi Turnstile wajib diisi')
 });
 
 export async function POST(event: RequestEvent) {
@@ -48,14 +46,6 @@ export async function POST(event: RequestEvent) {
       return json(
         { error: RATE_LIMIT_ERROR },
         { status: 429, headers: getRateLimitHeaders(rateResult) }
-      );
-    }
-
-    const turnstile = await verifyTurnstile(event, parsed.data.turnstileToken, 'convert');
-    if (!turnstile.success) {
-      return json(
-        { success: false, error: turnstile.error },
-        { status: 400 }
       );
     }
 

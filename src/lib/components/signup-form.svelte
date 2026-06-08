@@ -3,12 +3,15 @@
 	import * as Card from "$lib/components/ui/card/index.js";
 	import * as Field from "$lib/components/ui/field/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
+	import * as Alert from "$lib/components/ui/alert/index.js";
 	import Turnstile from "$lib/components/Turnstile.svelte";
 
 	let {
 		turnstileSiteKey,
+		authError = "",
 	}: {
 		turnstileSiteKey: string;
+		authError?: string;
 	} = $props();
 
 	let name = $state("");
@@ -24,9 +27,9 @@
 		error?: string;
 	};
 
-	function handleGoogleSignup() {
-		window.location.href = "/login/google";
-	}
+	$effect(() => {
+		if (authError) error = authError;
+	});
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
@@ -125,7 +128,9 @@
 					<Turnstile siteKey={turnstileSiteKey} action="register" bind:token={turnstileToken} disabled={loading} />
 				</Field.Field>
 				{#if error}
-					<p class="text-sm text-destructive">{error}</p>
+					<Alert.Root variant="destructive">
+						<Alert.Description>{error}</Alert.Description>
+					</Alert.Root>
 				{/if}
 				<Field.Field>
 					<Button type="submit" class="w-full" disabled={loading}>
@@ -133,9 +138,8 @@
 					</Button>
 					<Button
 						variant="outline"
-						type="button"
+						href="/login/google"
 						class="w-full"
-						onclick={handleGoogleSignup}
 					>
 						<svg class="size-4" viewBox="0 0 24 24">
 							<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>

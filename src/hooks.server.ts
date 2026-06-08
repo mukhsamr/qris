@@ -1,15 +1,13 @@
 import { type Handle, redirect } from '@sveltejs/kit';
 import { validateSession, getSessionCookieName } from '$lib/server/auth/session';
 
-const PUBLIC_ROUTES = [
+const AUTH_ROUTES = [
 	'/login',
 	'/register',
 	'/forgot-password',
-	'/api/convert',
-	'/api/auth/login',
-	'/api/auth/register',
-	'/api/v1/qris/generate',
 ];
+
+const PROTECTED_ROUTES = ['/dashboard'];
 
 function isRouteMatch(pathname: string, route: string): boolean {
 	return pathname === route || pathname.startsWith(`${route}/`);
@@ -25,20 +23,21 @@ export const handle: Handle = async ({ event, resolve }) => {
 		if (user) {
 			event.locals.user = user;
 			event.locals.sessionToken = token;
+		} else {
+			event.cookies.delete(getSessionCookieName(), { path: '/' });
 		}
 	}
 
-	// Protect dashboard routes
-	const isDashboardRoute = pathname.startsWith('/dashboard');
-	const isPublicRoute = PUBLIC_ROUTES.some((route) => isRouteMatch(pathname, route));
+	const isProtectedRoute = PROTECTED_ROUTES.some((route) => isRouteMatch(pathname, route));
+	const isAuthRoute = AUTH_ROUTES.some((route) => isRouteMatch(pathname, route));
 	const isGoogleAuthRoute = pathname.startsWith('/login/google');
 
-	if (isDashboardRoute && !event.locals.user) {
+	if (isProtectedRoute && !event.locals.user) {
 		throw redirect(302, '/login');
 	}
 
 	// Redirect logged-in users away from auth pages
-	if ((isPublicRoute || pathname === '/login' || pathname === '/register') && event.locals.user && !isGoogleAuthRoute) {
+	if (isAuthRoute && event.locals.user && !isGoogleAuthRoute) {
 		throw redirect(302, '/dashboard');
 	}
 

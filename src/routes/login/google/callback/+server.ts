@@ -3,12 +3,12 @@ import { eq, and } from 'drizzle-orm';
 import { getDb } from '$lib/server/db/index';
 import { users, oauthAccounts } from '$lib/server/db/schema';
 import { createSession, getSessionCookieName, getSessionCookieOptions } from '$lib/server/auth/session';
-import { validateGoogleCallback } from '$lib/server/auth/google';
+import { hasGoogleAuthEnv, validateGoogleCallback } from '$lib/server/auth/google';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ platform, cookies, url, locals }) => {
 	const env = platform?.env;
-	if (!env?.DB) throw redirect(302, '/login?error=config');
+	if (!env?.DB || !hasGoogleAuthEnv(env)) throw redirect(302, '/login?error=config');
 
 	const db = env.DB;
 	const drizzle = getDb(db);

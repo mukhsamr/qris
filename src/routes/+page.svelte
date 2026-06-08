@@ -11,7 +11,6 @@
 
   import Navbar from "$lib/components/ui/Navbar.svelte";
   import FileUpload from "$lib/components/ui/FileUpload.svelte";
-  import Turnstile from "$lib/components/Turnstile.svelte";
 
   import { Button } from "$lib/components/ui/button";
   import { Label } from "$lib/components/ui/label";
@@ -19,15 +18,12 @@
   import * as Alert from "$lib/components/ui/alert";
   import * as Collapsible from "$lib/components/ui/collapsible";
 
-  let { data }: { data: { turnstileSiteKey: string } } = $props();
-
   let fileInput = $state<HTMLInputElement>();
   let imagePreview = $state<string | null>(null);
   let qrisPayload = $state<string>("");
   let amount = $state<string>("");
   let generatedPayload = $state<string | null>(null);
   let generatedQRDataURL = $state<string | null>(null);
-  let turnstileToken = $state("");
   let error = $state<string | null>(null);
   let decoding = $state(false);
   let generating = $state(false);
@@ -117,11 +113,6 @@
       return;
     }
 
-    if (!turnstileToken) {
-      error = "Selesaikan verifikasi Turnstile terlebih dahulu";
-      return;
-    }
-
     generating = true;
 
     try {
@@ -131,7 +122,6 @@
         body: JSON.stringify({
           qrisPayload,
           amount: numAmount,
-          turnstileToken,
         }),
       });
 
@@ -177,7 +167,6 @@
     amount = "";
     generatedPayload = null;
     generatedQRDataURL = null;
-    turnstileToken = "";
     error = null;
     decodeError = false;
     rawOpen = false;
@@ -275,9 +264,6 @@
               />
             </div>
           </div>
-
-          <!-- Error -->
-          <Turnstile siteKey={data.turnstileSiteKey} action="convert" bind:token={turnstileToken} disabled={generating} />
 
           {#if error}
             <Alert.Root variant="destructive">
