@@ -4,7 +4,8 @@
  */
 
 const ALGORITHM = 'PBKDF2';
-const ITERATIONS = 600_000;
+const HASH_VERSION = 'pbkdf2-sha256';
+const ITERATIONS = 150_000;
 const KEY_LENGTH = 32; // 256 bits
 const HASH_ALGORITHM = 'SHA-256';
 
@@ -28,11 +29,13 @@ function base64UrlDecode(str: string): Uint8Array<ArrayBuffer> {
 }
 
 /**
- * Hash a password with a random salt.
- * Returns: "salt:hash" (both base64url-encoded)
+ * Derive a PBKDF2 password hash.
  */
-export async function hashPassword(password: string): Promise<string> {
-	const salt = crypto.getRandomValues(new Uint8Array(16));
+async function derivePasswordHash(
+	password: string,
+	salt: Uint8Array<ArrayBuffer>,
+	iterations: number
+): Promise<Uint8Array<ArrayBuffer>> {
 	const encoder = new TextEncoder();
 	const passwordData = encoder.encode(password);
 
@@ -48,56 +51,48 @@ export async function hashPassword(password: string): Promise<string> {
 		{
 			name: ALGORITHM,
 			salt,
-			iterations: ITERATIONS,
+			iterations,
 			hash: HASH_ALGORITHM,
 		},
 		key,
 		KEY_LENGTH * 8
 	);
 
+	return new Uint8Array(derived);
+}
+
+/**
+ * Hash a password with a random salt.
+ * Returns: "pbkdf2-sha256$iterations$salt$hash" (salt/hash base64url-encoded)
+ */
+export async function hashPassword(password: string): Promise<string> {
+	const salt = crypto.getRandomValues(new Uint8Array(16));
+	const derived = await derivePasswordHash(password, salt, ITERATIONS);
+
 	const saltEncoded = base64UrlEncode(salt);
 	const hashEncoded = base64UrlEncode(derived);
 
-	return `${saltEncoded}:${hashEncoded}`;
+	return `${HASH_VERSION}$${ITERATIONS}$${saltEncoded}$${hashEncoded}`;
 }
 
 /**
  * Verify a password against a stored hash.
- * storedHash format: "salt:hash"
+ * storedHash format: "pbkdf2-sha256$iterations$salt$hash"
  */
 export async function verifyPassword(
 	password: string,
 	storedHash: string
 ): Promise<boolean> {
-	const [saltEncoded, hashEncoded] = storedHash.split(':');
+	const [version, iterationsRaw, saltEncoded, hashEncoded] = storedHash.split('$');
+	if (version !== HASH_VERSION) return false;
+	const iterations = Number(iterationsRaw);
+	if (!Number.isInteger(iterations) || iterations <= 0) return false;
 	if (!saltEncoded || !hashEncoded) return false;
 
 	const salt = base64UrlDecode(saltEncoded);
 	const expectedHash = base64UrlDecode(hashEncoded);
 
-	const encoder = new TextEncoder();
-	const passwordData = encoder.encode(password);
-
-	const key = await crypto.subtle.importKey(
-		'raw',
-		passwordData,
-		{ name: ALGORITHM },
-		false,
-		['deriveBits']
-	);
-
-	const derived = await crypto.subtle.deriveBits(
-		{
-			name: ALGORITHM,
-			salt,
-			iterations: ITERATIONS,
-			hash: HASH_ALGORITHM,
-		},
-		key,
-		KEY_LENGTH * 8
-	);
-
-	const derivedBytes = new Uint8Array(derived);
+	const derivedBytes = await derivePasswordHash(password, salt, iterations);
 
 	if (derivedBytes.length !== expectedHash.length) return false;
 

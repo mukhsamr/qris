@@ -2,7 +2,6 @@
 	export const navItems = [
 		{ label: "Dashboard", href: "/dashboard", icon: "layout-dashboard" },
 		{ label: "QRIS", href: "/dashboard/qris", icon: "qr-code" },
-		{ label: "Stats", href: "/dashboard/stats", icon: "bar-chart-3" },
 		{ label: "API Keys", href: "/dashboard/api-keys", icon: "key" },
 		{ label: "Settings", href: "/dashboard/settings", icon: "settings" },
 	] as const;
@@ -19,7 +18,6 @@
 	import QrCode from "@lucide/svelte/icons/qr-code";
 	import KeyRound from "@lucide/svelte/icons/key-round";
 	import Settings from "@lucide/svelte/icons/settings";
-	import BarChart3 from "@lucide/svelte/icons/bar-chart-3";
 
 	let { userName = "User", userEmail = "user@email.com", userAvatarUrl = "" } = $props();
 
@@ -28,7 +26,6 @@
 		"qr-code": QrCode,
 		key: KeyRound,
 		settings: Settings,
-		"bar-chart-3": BarChart3,
 	};
 
 	let currentPath = $derived(page.url.pathname);

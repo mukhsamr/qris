@@ -1,6 +1,6 @@
-import { and, eq, desc, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { getDb } from '$lib/server/db/index';
-import { generationLogs, savedQris } from '$lib/server/db/schema';
+import { generationLogs } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, platform }) => {
@@ -23,7 +23,6 @@ export const load: PageServerLoad = async ({ locals, platform }) => {
 
 	const drizzle = getDb(db);
 
-	// Summary stats
 	const [totalResult] = await drizzle
 		.select({ count: sql<number>`COUNT(*)` })
 		.from(generationLogs)
@@ -59,7 +58,6 @@ export const load: PageServerLoad = async ({ locals, platform }) => {
 		{ label: 'API Calls', value: String(apiCalls), icon: 'clock' },
 	];
 
-	// Recent logs
 	const recentLogs = await drizzle
 		.select({
 			id: generationLogs.id,
@@ -77,12 +75,10 @@ export const load: PageServerLoad = async ({ locals, platform }) => {
 		id: log.id,
 		time: formatRelative(new Date(log.createdAt)),
 		reference: log.reference ?? '-',
-		qris: '-',
 		amount: log.amount,
 		source: log.source === 'api' ? 'API' : 'Dashboard',
 	}));
 
-	// Chart data — last 7 days
 	const chartData = await getLast7DaysData(drizzle, locals.user.id);
 
 	return { summary, logs, chartData };

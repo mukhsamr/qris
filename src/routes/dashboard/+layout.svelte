@@ -7,7 +7,6 @@
 	const pageTitle: Record<string, string> = {
 		"/dashboard": "Dashboard",
 		"/dashboard/qris": "QRIS",
-		"/dashboard/stats": "Stats",
 		"/dashboard/api-keys": "API Keys",
 		"/dashboard/settings": "Settings",
 	};
