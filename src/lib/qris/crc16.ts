@@ -29,9 +29,17 @@ export function crc16(data: string): string {
 export function isValidCRC(fullPayload: string): boolean {
   if (fullPayload.length < 8) return false;
 
-  // 4 karakter terakhir adalah tag "63" + 2 digit length "04"
-  const payloadWithoutCRC = fullPayload.slice(0, -8); // hilangkan "6304XXXX"
-  const actualCRC = fullPayload.slice(-4);
+  const crcTagOffset = fullPayload.length - 8;
+  if (fullPayload.slice(crcTagOffset, crcTagOffset + 4) !== "6304") {
+    return false;
+  }
+
+  const actualCRC = fullPayload.slice(-4).toUpperCase();
+  if (!/^[0-9A-F]{4}$/.test(actualCRC)) {
+    return false;
+  }
+
+  const payloadWithoutCRC = fullPayload.slice(0, crcTagOffset);
   const expectedCRC = crc16(payloadWithoutCRC + "6304");
 
   return actualCRC === expectedCRC;

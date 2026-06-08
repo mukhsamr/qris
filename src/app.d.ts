@@ -1,5 +1,6 @@
+import type { SessionUser } from '$lib/server/auth/session';
+
 // See https://svelte.dev/docs/kit/types#app.d.ts
-// for information about these interfaces
 declare global {
 	namespace App {
 		interface Platform {
@@ -7,14 +8,12 @@ declare global {
 			ctx: ExecutionContext;
 			caches: CacheStorage;
 			cf?: IncomingRequestCfProperties;
-			env: Env;
-			ctx: ExecutionContext;
-			caches: CacheStorage;
-			cf?: IncomingRequestCfProperties
 		}
 
-		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			user?: SessionUser;
+			sessionToken?: string;
+		}
 		// interface PageData {}
 		// interface PageState {}
 	}

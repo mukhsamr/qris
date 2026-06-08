@@ -1,0 +1,4 @@
+GOOGLE_CLIENT_SECRET=GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# local
+GOOGLE_REDIRECT_URI=http://localhost:5173/login/google/callback

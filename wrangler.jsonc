@@ -10,19 +10,36 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
-	"workers_dev": true,
-	"preview_urls": true,
+	"workers_dev": false,
+	"preview_urls": false,
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	},
+	"vars": {
+		"GOOGLE_CLIENT_ID": "792336989325-735tjlm2o4cnkf45i0l07ravg54r26pu.apps.googleusercontent.com",
+		"GOOGLE_REDIRECT_URI": "https://qris.nqmcreative.com/login/google/callback",
+		"TURNSTILE_SITE_KEY": "0x4AAAAAADd2TU5PPqosIK2E"
+	},
+	"secrets_store_secrets": [
+		{
+			"binding": "TURNSTILE_SECRET_KEY",
+			"store_id": "97c06a71fcc748c399ff450a1face299",
+			"secret_name": "nqm-turnstile-secret"
+		}
+	],
 	"d1_databases": [
 		{
 			"binding": "DB",
 			"database_name": "qris-db",
-			"database_id": "d1357115-becd-4997-8645-46dd69785cbd"
+			"database_id": "d1357115-becd-4997-8645-46dd69785cbd",
+			"migrations_dir": "./migrations"
 		}
 	],
 	"r2_buckets": [
 		{
 			"bucket_name": "qris-bucket",
-			"binding": "BUCKET"
+			"binding": "MEDIA"
 		}
-	],
+	]
 }

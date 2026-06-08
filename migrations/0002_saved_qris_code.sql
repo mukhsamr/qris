@@ -1,0 +1,2 @@
+-- No-op migration kept for existing migration order.
+-- The saved_qris.code column and unique index are already created in 0001_initial_auth_and_qris.sql.

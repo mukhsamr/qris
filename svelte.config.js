@@ -7,7 +7,11 @@ const config = {
 		runes: ({ filename }) => filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 	},
 	kit: {
-		adapter: adapter(),
+		adapter: adapter({
+			platformProxy: {
+				configPath: './wrangler.jsonc'
+			}
+		}),
 		typescript: {
 			config: (config) => ({
 				...config,

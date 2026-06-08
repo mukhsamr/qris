@@ -32,51 +32,48 @@ export function buildAmountTag(amount: number): string {
  * 5. Hitung CRC baru dan tambahkan tag 63
  */
 export function buildDynamicQRIS(staticPayload: string, amount: number): string {
-  // 1. Strip old CRC (tag 63 — selalu 8 karakter terakhir: "6304XXXX")
-  if (staticPayload.length < 8) {
-    throw new Error("Payload QRIS terlalu pendek");
+  const entries = parseTopLevelEntries(staticPayload);
+  const crcEntry = entries.at(-1);
+
+  if (!crcEntry || crcEntry.tag !== "63" || crcEntry.length !== 4) {
+    throw new Error("Payload QRIS harus memiliki tag CRC valid di akhir");
   }
-  let body = staticPayload.slice(0, -8);
 
-  // 2. Remove existing tag 54 if present
-  body = removeTag(body, "54");
-
-  // 3. Change tag 01 from static "0211" to dynamic "0212"
-  body = body.replace("010211", "010212");
-
-  // 4. Insert tag 54 (amount) before tag 58 or at the position after tag 53/52/51 area
   const amountTag = buildAmountTag(amount);
-  body = insertBeforeTag(body, amountTag, ["58", "59", "60", "61", "62"]);
+  const bodyEntries = entries
+    .slice(0, -1)
+    .filter((entry) => entry.tag !== "54")
+    .map((entry) => {
+      if (entry.tag === "01") {
+        return buildTLV("01", "12");
+      }
 
-  // 5. Calculate CRC
+      return entry.raw;
+    });
+
+  const body = insertBeforeTag(bodyEntries.join(""), amountTag, ["58", "59", "60", "61", "62"]);
+
   const checksum = crc16(body + "6304");
   const crcTag = `6304${checksum}`;
 
   return body + crcTag;
 }
 
-/**
- * Hapus single TLV entry by tag.
- */
-function removeTag(payload: string, targetTag: string): string {
-  let result = "";
+function parseTopLevelEntries(payload: string): TLVParsed[] {
+  const entries: TLVParsed[] = [];
   let offset = 0;
 
   while (offset < payload.length) {
     const entry = parseTLVAt(payload, offset);
     if (!entry) {
-      // Tidak bisa parse — tambahkan sisa
-      result += payload.slice(offset);
-      break;
+      throw new Error("Payload QRIS tidak dapat diparse");
     }
 
-    if (entry.tag !== targetTag) {
-      result += entry.raw;
-    }
+    entries.push(entry);
     offset += entry.raw.length;
   }
 
-  return result;
+  return entries;
 }
 
 /**

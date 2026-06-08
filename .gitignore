@@ -12,11 +12,12 @@ node_modules
 .DS_Store
 Thumbs.db
 
-# Env
+# Env (Cloudflare: secrets via wrangler secret put, local via .dev.vars)
 .env
 .env.*
+.dev.vars
 !.env.example
-!.env.test
+!.dev.vars.example
 
 # Vite
 vite.config.js.timestamp-*
@@ -25,3 +26,6 @@ vite.config.ts.timestamp-*
 # AI
 AGENTS.md
 PRODUCT.md
+
+# Playwright
+.playwright-cli

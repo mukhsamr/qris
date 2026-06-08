@@ -1,9 +1,10 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import type { Component } from "svelte";
   import Upload from "@lucide/svelte/icons/upload";
+  import LoaderCircle from "@lucide/svelte/icons/loader-circle";
   import CircleCheck from "@lucide/svelte/icons/circle-check";
   import CircleAlert from "@lucide/svelte/icons/circle-alert";
+  import { Label } from "$lib/components/ui/label";
 
   interface Props {
     accept?: string;
@@ -20,7 +21,6 @@
     loadingSubMessage?: string;
     errorMessage?: string;
     errorSubMessage?: string;
-    placeholderIcon?: Component<{ class?: string; strokeWidth?: number }>;
     placeholderText?: string;
     placeholderHint?: string;
     onchange?: (e: Event) => void;
@@ -42,30 +42,25 @@
     loadingSubMessage = "Decoding",
     errorMessage = "QR tidak terdeteksi",
     errorSubMessage = "Klik untuk mengganti gambar",
-    placeholderIcon: Icon = Upload,
-    placeholderText = "Upload gambar QRIS",
+    placeholderText = "Pilih atau letakkan gambar QRIS",
     placeholderHint = hint,
     onchange,
     inputRef = $bindable(null),
   }: Props = $props();
 </script>
 
-<div>
+<div class="space-y-1.5">
   {#if label}
-    <label
-      for="file-upload"
-      class="mb-2 block text-[0.7rem] font-semibold uppercase tracking-[0.15em] text-muted-soft"
-    >
-      {label}
-    </label>
+    <Label for="file-upload">{label}</Label>
   {/if}
   <label
-    class="relative block cursor-pointer overflow-hidden rounded-md border border-border bg-surface transition-colors hover:border-border-strong"
+    for="file-upload"
+    class="relative block cursor-pointer overflow-hidden rounded-2xl border border-input bg-input/50 transition-[color,box-shadow] hover:border-ring/30 focus-within:ring-3 focus-within:ring-ring/30 focus-within:border-ring"
   >
     {#if preview}
       <div class="flex items-center gap-4 p-4">
         <div
-          class="grid size-[52px] shrink-0 place-items-center rounded-md border border-border bg-card p-1"
+          class="grid size-13 shrink-0 place-items-center rounded-lg border border-border bg-card p-1"
         >
           <img
             src={preview}
@@ -75,36 +70,44 @@
         </div>
         <div class="min-w-0 flex-1">
           {#if decoding}
-            <p class="text-[0.875rem] font-medium text-ink">
+            <p class="text-sm font-medium text-foreground">
               {loadingMessage}
+              <LoaderCircle
+                class="ml-2 inline-block size-3.5 animate-spin text-muted-foreground"
+              />
             </p>
-            <p class="mt-0.5 text-[0.75rem] text-muted-soft">
+            <p class="mt-0.5 text-xs text-muted-foreground">
               {loadingSubMessage}
             </p>
           {:else if decoded}
-            <p class="text-[0.875rem] font-medium text-accent-strong">
+            <p class="text-sm font-medium text-primary">
               {successMessage}
             </p>
-            <p class="mt-0.5 text-[0.75rem] text-muted-soft">
+            <p class="mt-0.5 text-xs text-muted-foreground">
               {successSubMessage}
             </p>
           {:else if decodeError}
-            <p class="text-[0.875rem] font-medium text-red-600">
+            <p class="text-sm font-medium text-destructive">
               {errorMessage}
             </p>
-            <p class="mt-0.5 text-[0.75rem] text-muted-soft">
+            <p class="mt-0.5 text-xs text-muted-foreground">
               {errorSubMessage}
             </p>
+          {:else}
+            <p class="text-sm font-medium text-foreground">Preview</p>
           {/if}
         </div>
       </div>
     {:else}
       <div class="flex flex-col items-center gap-2 py-7">
-        <Icon class="size-5 text-muted-soft" strokeWidth={1.75} />
-        <p class="text-[0.875rem] font-medium text-ink">
+        <Upload
+          class="size-5 text-muted-foreground"
+          strokeWidth={1.75}
+        />
+        <p class="text-sm font-medium text-foreground">
           {placeholderText}
         </p>
-        <p class="text-[0.75rem] text-muted-soft">{placeholderHint}</p>
+        <p class="text-xs text-muted-foreground">{placeholderHint}</p>
       </div>
     {/if}
     <input
