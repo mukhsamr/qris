@@ -5,7 +5,7 @@
 
 const ALGORITHM = 'PBKDF2';
 const HASH_VERSION = 'pbkdf2-sha256';
-const ITERATIONS = 150_000;
+const ITERATIONS = 1000;
 const KEY_LENGTH = 32; // 256 bits
 const HASH_ALGORITHM = 'SHA-256';
 
