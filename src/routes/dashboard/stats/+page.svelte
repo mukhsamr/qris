@@ -1,12 +1,13 @@
 <script lang="ts">
 	import * as Separator from "$lib/components/ui/separator/index.js";
 	import { BarChart3, TrendingUp, Activity, Clock } from "@lucide/svelte/icons";
+	import type { PageData } from "./$types";
 
-	let { data } = $props();
+	let { data }: { data: PageData } = $props();
 
-	const summary = data.summary ?? [];
-	const logs = data.logs ?? [];
-	const chartData = data.chartData ?? [];
+	const summary = $derived(data.summary ?? []);
+	const logs = $derived(data.logs ?? []);
+	const chartData = $derived(data.chartData ?? []);
 
 	const iconMap: Record<string, typeof BarChart3> = {
 		'bar-chart-3': BarChart3,
@@ -15,9 +16,9 @@
 		clock: Clock,
 	};
 
-	const maxVal = chartData.length > 0
+	const maxVal = $derived(chartData.length > 0
 		? Math.max(...chartData.flatMap((d: { api: number; dashboard: number }) => [d.api, d.dashboard]), 1)
-		: 1;
+		: 1);
 
 	function formatRp(n: number) {
 		if (n >= 1000000) return `${(n / 1000000).toFixed(1)}jt`;

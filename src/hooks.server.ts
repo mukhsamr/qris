@@ -31,10 +31,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// Protect dashboard routes
 	const isDashboardRoute = pathname.startsWith('/dashboard');
 	const isPublicRoute = PUBLIC_ROUTES.some((route) => isRouteMatch(pathname, route));
-	const isRoot = pathname === '/';
 	const isGoogleAuthRoute = pathname.startsWith('/login/google');
 
-	if ((isDashboardRoute || isRoot) && !event.locals.user) {
+	if (isDashboardRoute && !event.locals.user) {
 		throw redirect(302, '/login');
 	}
 
